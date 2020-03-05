@@ -20,26 +20,24 @@ public class Cliente {
      */
     public static void main(String[] args) {
         try {
-            // Criando conexão com servidor da porta 8900
-            Socket cliente = new Socket("0.0.0.0", 8900);
-            String s1 = new String();
-            
             Scanner teclado = new Scanner(System.in);
-            PrintStream saida = new PrintStream(cliente.getOutputStream());
-            
-            while(teclado.hasNextLine()) {
-                s1 = teclado.nextLine();
-                saida.println(s1);
-                                
-                if(s1.equals("bye")) {
-                    System.out.println("tchau");
-                    break;
-                }
-                
-            }
-            
-            teclado.close();
+            InetAddress end = InetAddress.getLocalHost();
+            Socket s = new Socket(end, 9000);
+            Scanner entrada = new Scanner(s.getInputStream());
+            PrintWriter saida = new PrintWriter(s.getOutputStream(), true);
+            String msg, msgRecebida;
+
+            do {
+                System.out.println("Digite um texto");
+                msg = teclado.nextLine();
+                saida.println(msg);
+                msgRecebida = entrada.nextLine();
+                System.out.println(msgRecebida);            
+            } while(!msg.equals("bye"));
+
+            entrada.close();
             saida.close();
+            s.close();
            
         } catch (Exception e) {
             System.out.println("erro de conexão " + e.getMessage());
