@@ -20,24 +20,24 @@ public class Servidor {
      */
     public static void main(String[] args) {
         try {
-            // Criando novo servidor na porta 8900
-            ServerSocket server = new ServerSocket(8900);
-            System.out.println("Servidor iniciado na porta " + server.getLocalPort() + " " + server.getInetAddress().getHostAddress());
-            
-            // Esperando conexão de algum cliente
-            Socket cliente = server.accept();
-            System.out.println("clente: " + cliente.getInetAddress().getHostAddress());
-            
-            // Recuperação de dados enviados pelo cliente
-            Scanner entrada = new Scanner(cliente.getInputStream());
-            while(entrada.hasNextLine()) {
-                String palavra = entrada.nextLine();
-                System.out.println(palavra);
-            }
+            ServerSocket server = new ServerSocket(9000);
 
-            cliente.close();
-            entrada.close();
-            server.close();
+            while(true) {
+                System.out.println("Aguardando cliente");
+                Socket cliente = server.accept();
+                Scanner entrada = new Scanner(cliente.getInputStream());
+                PrintWriter saida = new PrintWriter(cliente.getOutputStream(), true);
+                String msg;
+
+                do {
+                    msg = entrada.nextLine();
+                    saida.println(msg.toUpperCase());
+                } while(!msg.equals("bye"));
+
+                entrada.close();
+                saida.close();
+                cliente.close();
+            }
         } catch (Exception e) {
             System.out.println("erro ao iniciar o servidor " + e.getMessage());
         }
